@@ -1,11 +1,16 @@
 {-# LANGUAGE OverloadedStrings #-}
--- | Module    : Network.MPD.Commands.Util
--- Copyright   : (c) Ben Sinclair 2005-2009, Joachim Fasting 2010
--- License     : LGPL (see LICENSE)
--- Maintainer  : Joachim Fasting <joachim.fasting@gmail.com>
--- Stability   : alpha
---
--- Internal utilities for implementing MPD commands.
+
+{-|
+Module      : Network.MPD.Commands.Util
+Copyright   : (c) Joachim Fasting, Simon Hengel 2012
+License     : MIT
+
+Maintainer  : Joachim Fasting <joachim.fasting@gmail.com>
+Stability   : unstable
+Portability : unportable
+
+Internal utilities for implementing MPD commands.
+-}
 
 module Network.MPD.Commands.Util where
 
