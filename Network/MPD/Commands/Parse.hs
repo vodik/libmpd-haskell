@@ -118,7 +118,7 @@ parseStatus = foldM f def . toAssocList
     where f a ("state", x)
               = return $ parse state     (\x' -> a { stState = x' }) a x
           f a ("volume", x)
-              = return $ parse parseNum  (\x' -> a { stVolume = fromInteger x' }) a x
+              = return $ parse parseVolume (\x' -> a { stVolume = Just x' }) a x
           f a ("repeat", x)
               = return $ parse parseBool (\x' -> a { stRepeat = x' }) a x
           f a ("random", x)
@@ -170,6 +170,12 @@ parseStatus = foldM f def . toAssocList
                        _                -> Nothing
 
           audio = parseTriple ':' parseNum
+
+          -- Volume will be -1 if the audio backend has no mixer
+          parseVolume :: ByteString -> Maybe Volume
+          parseVolume = join . fmap g . parseNum
+              where g n | n < 0     = Nothing
+                        | otherwise = Just (fromInteger n)
 
 -- | Run a parser and lift the result into the 'MPD' monad
 runParser :: (MonadMPD m, MonadError MPDError m)
