@@ -138,11 +138,11 @@ parseStatus = foldM f def . toAssocList
           f a ("songid", x)
               = return $ parse parseNum  (\x' -> a { stSongID = Just $ Id x' }) a x
           f a ("time", x)
-              = return $ parse time      (\x' -> a { stTime = x' }) a x
+              = return $ parse time      (\x' -> a { stTime = Just x' }) a x
           f a ("elapsed", x)
-              = return $ parse parseFrac (\x' -> a { stTime = (x', snd $ stTime a) }) a x
+              = return $ parse parseFrac (\x' -> a { stTime = setElapsed x' a }) a x
           f a ("bitrate", x)
-              = return $ parse parseNum  (\x' -> a { stBitrate = x' }) a x
+              = return $ parse parseNum  (\x' -> a { stBitrate = Just x' }) a x
           f a ("audio", x)
               = return $ parse audio     (\x' -> a { stAudio = x' }) a x
           f a ("updating_db", x)
@@ -159,6 +159,8 @@ parseStatus = foldM f def . toAssocList
               = return $ parse parseNum  (\x' -> a { stNextSongID = Just $ Id x' }) a x
           f _ x
               = fail $ show x
+
+          setElapsed x a = maybe Nothing (\(_, y) -> Just (x, y)) (stTime a)
 
           state "play"  = Just Playing
           state "pause" = Just Paused
