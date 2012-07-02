@@ -322,9 +322,9 @@ instance MPDArg Volume where
 -- | Container for MPD status.
 data Status =
     Status { stState :: State
-           , stVolume          :: Maybe Volume
              -- | Volume in percent.
              -- 'Nothing' indicates that the output lacks mixer support.
+           , stVolume          :: Maybe Volume
            , stRepeat          :: Bool
            , stRandom          :: Bool
              -- | A value that is incremented by the server every time the
