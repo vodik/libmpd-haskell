@@ -49,12 +49,15 @@ instance Unparse Stats where
         , "db_update: " ++ show (stsDbUpdate s)
         ]
 
+instance Unparse Volume where
+    unparse (Volume x) = show x
+
 instance Unparse Status where
     unparse s = unlines $
         [ "state: " ++ (case stState s of Playing -> "play"
                                           Paused  -> "pause"
                                           _       -> "stop")
-        , "volume: " ++ show (stVolume s)
+        , "volume: " ++ unparse (stVolume s)
         , "repeat: " ++ showBool (stRepeat s)
         , "random: " ++ showBool (stRandom s)
         , "playlist: " ++ show (stPlaylistVersion s)

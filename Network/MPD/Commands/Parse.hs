@@ -118,7 +118,7 @@ parseStatus = foldM f def . toAssocList
     where f a ("state", x)
               = return $ parse state     (\x' -> a { stState = x' }) a x
           f a ("volume", x)
-              = return $ parse parseNum  (\x' -> a { stVolume = x' }) a x
+              = return $ parse parseNum  (\x' -> a { stVolume = fromInteger x' }) a x
           f a ("repeat", x)
               = return $ parse parseBool (\x' -> a { stRepeat = x' }) a x
           f a ("random", x)
