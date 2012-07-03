@@ -87,6 +87,7 @@ Library
       , Network.MPD.Commands.Connection
       , Network.MPD.Commands.Output
       , Network.MPD.Commands.Reflection
+      , Network.MPD.Client.Env
       , Network.MPD.Client.Remote
       , Network.MPD.Applicative.Util
       , Network.MPD.Util
