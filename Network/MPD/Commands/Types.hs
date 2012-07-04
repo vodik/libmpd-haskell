@@ -30,6 +30,7 @@ module Network.MPD.Commands.Types
     , Id(..)
     , sgGetTag
     , sgAddTag
+    , Volume(..)
     , Stats(..)
     , Status(..)
     , def
@@ -275,11 +276,55 @@ defaultStats =
 instance Default Stats where
     def = defaultStats
 
+-- | Volume values.
+--
+-- Values of this type are always in the range 0-100.
+--
+-- Arithmetic on volumes has the property that:
+--
+-- @current + new = 100 if current + new > 100@
+--
+-- @current - new = 0   if current - new < 0@
+--
+-- but @current / 0@ still yields a division by zero exception.
+newtype Volume = Volume Int deriving (Eq, Ord, Show)
+
+instance Enum Volume where
+    toEnum = Volume . min 100 . max 0
+    fromEnum (Volume x) = x
+
+instance Bounded Volume where
+    minBound = 0
+    maxBound = 100
+
+instance Num Volume where
+    Volume x + Volume y = toEnum (x + y)
+    Volume x - Volume y = toEnum (x - y)
+    Volume x * Volume y = toEnum (x * y)
+
+    negate = id
+    abs    = id
+    signum = const 0
+
+    fromInteger = toEnum . fromIntegral
+
+instance Integral Volume where
+    quotRem (Volume x) (Volume y) =
+        let (x', y') = x `quotRem` y in (Volume x', Volume y')
+    toInteger (Volume x) = fromIntegral x
+
+instance Real Volume where
+    toRational (Volume x) = toRational x
+
+instance MPDArg Volume where
+    prep (Volume x) = prep x
+
 -- | Container for MPD status.
 data Status =
     Status { stState :: State
-             -- | A percentage (0-100)
-           , stVolume          :: Int
+             -- | Volume in percent.
+             -- 'Nothing' indicates that the output lacks mixer support.
+           , stVolume          :: Maybe Volume
            , stRepeat          :: Bool
            , stRandom          :: Bool
              -- | A value that is incremented by the server every time the
@@ -320,7 +365,7 @@ data Status =
 
 defaultStatus :: Status
 defaultStatus =
-    Status { stState = Stopped, stVolume = 0, stRepeat = False
+    Status { stState = Stopped, stVolume = Just 0, stRepeat = False
            , stRandom = False, stPlaylistVersion = 0, stPlaylistLength = 0
            , stSongPos = Nothing, stSongID = Nothing, stTime = Nothing
            , stNextSongPos = Nothing, stNextSongID = Nothing
